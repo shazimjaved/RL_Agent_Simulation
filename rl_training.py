@@ -1,5 +1,5 @@
 import numpy as np
-import gym
+import gymnasium as gym
 from stable_baselines3 import PPO, A2C
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
