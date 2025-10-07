@@ -63,7 +63,7 @@ class SSPolicy:
             Dictionary containing performance metrics
         """
         
-        obs = env.reset()
+        obs, _ = env.reset()
         
         daily_costs = []
         daily_shortages = []
@@ -82,7 +82,7 @@ class SSPolicy:
            
             action = self.get_action(obs)
             
-            obs, reward, done, info = env.step(action)
+            obs, reward, done, truncated, info = env.step(action)
             
             
             # Track overall metrics
