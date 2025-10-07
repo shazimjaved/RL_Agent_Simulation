@@ -59,7 +59,7 @@ class InventoryEnv(gym.Env):
         self.daily_penalty_costs_product1 = []
         self.daily_penalty_costs_product2 = []
         
-    def reset(self) -> np.ndarray:
+    def reset(self, seed=None, options=None) -> Tuple[np.ndarray, Dict]:
         
         self.stock = np.array([0, 0], dtype=np.int32)
         self.pending_orders = []
@@ -83,9 +83,9 @@ class InventoryEnv(gym.Env):
         self.daily_penalty_costs_product1 = []
         self.daily_penalty_costs_product2 = []
         
-        return self.stock.copy()
+        return self.stock.copy(), {}
     
-    def step(self, action: Tuple[int, int]) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
+    def step(self, action: Tuple[int, int]) -> Tuple[np.ndarray, float, bool, bool, Dict[str, Any]]:
        
         order1, order2 = action
         
@@ -176,7 +176,7 @@ class InventoryEnv(gym.Env):
             'penalty_cost_product2': penalty_cost2
         }
         
-        return self.stock.copy(), reward, False, info
+        return self.stock.copy(), reward, False, False, info
     
     def _generate_demand(self, product: int) -> int:
         
@@ -277,12 +277,12 @@ if __name__ == "__main__":
     print(f"Action space: {env.action_space}")
     print(f"Observation space: {env.observation_space}")
     
-    obs = env.reset()
+    obs, _ = env.reset()
     print(f"Initial observation: {obs}")
     
     for i in range(5):
         action = env.action_space.sample()
-        obs, reward, done, info = env.step(action)
+        obs, reward, done, truncated, info = env.step(action)
         print(f"Step {i+1}: Action={action}, Obs={obs}, Reward={reward:.2f}")
         env.render()
     
