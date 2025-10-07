@@ -105,7 +105,7 @@ def evaluate_agent(model, env: InventoryEnv, days: int = 1000) -> Dict[str, Any]
         Dictionary containing evaluation metrics
     """
     print(f"Evaluating agent for {days} days...")
-    obs = env.reset()
+    obs, _ = env.reset()
     
     # Track metrics
     daily_costs = []
@@ -127,7 +127,7 @@ def evaluate_agent(model, env: InventoryEnv, days: int = 1000) -> Dict[str, Any]
         action, _ = model.predict(obs, deterministic=True)
         
         # Execute action
-        obs, reward, done, info = env.step(action)
+        obs, reward, done, truncated, info = env.step(action)
         total_reward += reward
         
         # Track overall metrics
@@ -298,12 +298,12 @@ def test_trained_agent():
             model = train_ppo_agent(env, total_timesteps=1000)
     
     # Run short test
-    obs = env.reset()
+    obs, _ = env.reset()
     print(f"Initial state: {obs}")
     
     for i in range(10):
         action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
+        obs, reward, done, truncated, info = env.step(action)
         print(f"Step {i+1}: Action={action}, State={obs}, Reward={reward:.2f}")
     
     print("Agent test completed!")
