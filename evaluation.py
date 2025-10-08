@@ -25,16 +25,31 @@ class InventoryEvaluator:
         return metrics
     
     def evaluate_rl_agent(self, model_path: str, days: int = 1000) -> Dict[str, Any]:
-       
-        try:
-            model = PPO.load(model_path)
+        # Determine agent type from file path first
+        model_name = os.path.basename(model_path).lower()
+        if 'ppo' in model_name:
             agent_type = "PPO"
-        except:
+            try:
+                model = PPO.load(model_path)
+            except Exception as e:
+                raise ValueError(f"Could not load PPO model from {model_path}: {e}")
+        elif 'a2c' in model_name:
+            agent_type = "A2C"
             try:
                 model = A2C.load(model_path)
-                agent_type = "A2C"
+            except Exception as e:
+                raise ValueError(f"Could not load A2C model from {model_path}: {e}")
+        else:
+            # Fallback: try PPO first, then A2C
+            try:
+                model = PPO.load(model_path)
+                agent_type = "PPO"
             except:
-                raise ValueError(f"Could not load model from {model_path}")
+                try:
+                    model = A2C.load(model_path)
+                    agent_type = "A2C"
+                except Exception as e:
+                    raise ValueError(f"Could not load model from {model_path}: {e}")
         
         # Evaluate agent
         metrics = evaluate_agent(model, self.env, days)
