@@ -114,7 +114,7 @@ python main.py
 
 The simulation typically shows:
 - **Best performing policy**: Usually a classical (s, S) policy
-- **Cost improvements**: 80-90% better than baseline RL agents
+- **Cost improvements**: 30-40% better than baseline RL agents
 - **Service levels**: 55-95% depending on policy parameters
 - **Training time**: 5-10 minutes for complete evaluation
 
