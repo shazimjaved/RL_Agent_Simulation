@@ -23,4 +23,4 @@ RUN mkdir -p templates static/css static/js plots models
 EXPOSE 10000
 
 # Start the application
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--timeout", "900", "--max-requests", "1000", "--max-requests-jitter", "50", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--timeout", "300", "--max-requests", "1000", "--max-requests-jitter", "50", "app:app"]
