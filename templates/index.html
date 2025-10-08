@@ -84,7 +84,7 @@
                             </form>
                             <p class="text-muted mt-3 small">
                                 <i class="fas fa-clock me-1"></i>
-                                Estimated time: 5-10 minutes
+                                Estimated time: 2-3 minutes
                             </p>
                             
                             <!-- Loading Spinner (hidden by default) -->
@@ -95,7 +95,7 @@
                                     </div>
                                     <div>
                                         <h5 class="text-success mb-1">Running Simulation...</h5>
-                                        <p class="text-muted mb-0 small">This may take 5-10 minutes. Please wait...</p>
+                                        <p class="text-muted mb-0 small">Using pretrained models - should complete in 1-2 minutes...</p>
                                     </div>
                                 </div>
                                 
@@ -121,7 +121,7 @@
                                         <div class="col-3">
                                             <div class="step-indicator" id="step3">
                                                 <i class="fas fa-robot fa-2x text-muted"></i>
-                                                <p class="small mt-2 text-muted">RL Training</p>
+                                                <p class="small mt-2 text-muted">RL Evaluation</p>
                                             </div>
                                         </div>
                                         <div class="col-3">
@@ -210,26 +210,26 @@
             let currentStep = 1;
             
             const progressInterval = setInterval(function() {
-                progress += Math.random() * 15; 
+                progress += 7.14; 
                 
                 if (progress > 100) progress = 100;
                 
                 document.getElementById('progressBar').style.width = progress + '%';
                 
-                if (progress > 25 && currentStep === 1) {
+                if (progress > 20 && currentStep === 1) {
                     updateStep(1, true);
                     currentStep = 2;
-                } else if (progress > 50 && currentStep === 2) {
+                } else if (progress > 40 && currentStep === 2) {
                     updateStep(2, true);
                     currentStep = 3;
-                } else if (progress > 75 && currentStep === 3) {
+                } else if (progress > 70 && currentStep === 3) {
                     updateStep(3, true);
                     currentStep = 4;
                 } else if (progress >= 100 && currentStep === 4) {
                     updateStep(4, true);
                     clearInterval(progressInterval);
                 }
-            }, 2000);
+            }, 1000); // Every 1 second for exactly 14 seconds total
             
             function updateStep(stepNumber, isActive) {
                 const step = document.getElementById('step' + stepNumber);
