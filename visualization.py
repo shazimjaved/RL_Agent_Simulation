@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend for deployment
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -62,7 +62,18 @@ class InventoryVisualizer:
                 total_costs.append(agent['total_cost'])
                 avg_costs.append(agent['average_daily_cost'])
         
-        colors = ['skyblue' if '(s,S)' in p else 'lightcoral' for p in policies]
+        # Create distinct colors for each policy type
+        colors = []
+        for p in policies:
+            if '(s,S)' in p:
+                colors.append('skyblue')
+            elif p == 'PPO':
+                colors.append('lightcoral')
+            elif p == 'A2C':
+                colors.append('lightgreen')
+            else:
+                colors.append('lightgray')
+        
         bars1 = ax1.bar(policies, total_costs, color=colors, alpha=0.7, edgecolor='black')
         ax1.set_title('Total Cost Comparison', fontsize=14, fontweight='bold')
         ax1.set_ylabel('Total Cost')
@@ -85,7 +96,8 @@ class InventoryVisualizer:
         
         from matplotlib.patches import Patch
         legend_elements = [Patch(facecolor='skyblue', alpha=0.7, label='(s, S) Policies'),
-                          Patch(facecolor='lightcoral', alpha=0.7, label='RL Agents')]
+                          Patch(facecolor='lightcoral', alpha=0.7, label='PPO Agent'),
+                          Patch(facecolor='lightgreen', alpha=0.7, label='A2C Agent')]
         ax1.legend(handles=legend_elements, loc='upper right')
         
         plt.tight_layout()
@@ -115,7 +127,18 @@ class InventoryVisualizer:
             for agent in self.results['rl_agents']:
                 policies.append(agent['policy_type'])
                 service_levels.append(agent['service_level'])
-        colors = ['skyblue' if '(s,S)' in p else 'lightcoral' for p in policies]
+        # Create distinct colors for each policy type
+        colors = []
+        for p in policies:
+            if '(s,S)' in p:
+                colors.append('skyblue')
+            elif p == 'PPO':
+                colors.append('lightcoral')
+            elif p == 'A2C':
+                colors.append('lightgreen')
+            else:
+                colors.append('lightgray')
+        
         bars = ax.bar(policies, service_levels, color=colors, alpha=0.7, edgecolor='black')
         ax.set_title('Service Level Comparison', fontsize=14, fontweight='bold')
         ax.set_ylabel('Service Level (%)')
@@ -127,7 +150,8 @@ class InventoryVisualizer:
                     f'{level:.1f}%', ha='center', va='bottom', fontweight='bold')
         from matplotlib.patches import Patch
         legend_elements = [Patch(facecolor='skyblue', alpha=0.7, label='(s, S) Policies'),
-                          Patch(facecolor='lightcoral', alpha=0.7, label='RL Agents')]
+                          Patch(facecolor='lightcoral', alpha=0.7, label='PPO Agent'),
+                          Patch(facecolor='lightgreen', alpha=0.7, label='A2C Agent')]
         ax.legend(handles=legend_elements, loc='upper right')
         
         plt.tight_layout()
@@ -229,7 +253,18 @@ class InventoryVisualizer:
                 policies.append(agent['policy_type'])
                 total_costs.append(agent['total_cost'])
         
-        colors = ['skyblue' if '(s,S)' in p else 'lightcoral' for p in policies]
+        # Create distinct colors for each policy type
+        colors = []
+        for p in policies:
+            if '(s,S)' in p:
+                colors.append('skyblue')
+            elif p == 'PPO':
+                colors.append('lightcoral')
+            elif p == 'A2C':
+                colors.append('lightgreen')
+            else:
+                colors.append('lightgray')
+        
         bars = ax1.bar(policies, total_costs, color=colors, alpha=0.7)
         ax1.set_title('Total Cost Comparison', fontweight='bold')
         ax1.set_ylabel('Total Cost')
@@ -353,7 +388,17 @@ class InventoryVisualizer:
                 product1_costs.append(agent['total_cost_product1'])
                 product2_costs.append(agent['total_cost_product2'])
         
-        colors = ['skyblue' if '(s,S)' in p else 'lightcoral' for p in policies]
+        # Create distinct colors for each policy type
+        colors = []
+        for p in policies:
+            if '(s,S)' in p:
+                colors.append('skyblue')
+            elif p == 'PPO':
+                colors.append('lightcoral')
+            elif p == 'A2C':
+                colors.append('lightgreen')
+            else:
+                colors.append('lightgray')
         
         # Product 1 costs
         bars1 = ax1.bar(policies, product1_costs, color=colors, alpha=0.7, edgecolor='black')
@@ -379,7 +424,8 @@ class InventoryVisualizer:
         
         from matplotlib.patches import Patch
         legend_elements = [Patch(facecolor='skyblue', alpha=0.7, label='(s, S) Policies'),
-                          Patch(facecolor='lightcoral', alpha=0.7, label='RL Agents')]
+                          Patch(facecolor='lightcoral', alpha=0.7, label='PPO Agent'),
+                          Patch(facecolor='lightgreen', alpha=0.7, label='A2C Agent')]
         ax1.legend(handles=legend_elements, loc='upper right')
         
         plt.tight_layout()
@@ -415,7 +461,17 @@ class InventoryVisualizer:
                 product1_service.append(agent['service_level_product1'])
                 product2_service.append(agent['service_level_product2'])
         
-        colors = ['skyblue' if '(s,S)' in p else 'lightcoral' for p in policies]
+        # Create distinct colors for each policy type
+        colors = []
+        for p in policies:
+            if '(s,S)' in p:
+                colors.append('skyblue')
+            elif p == 'PPO':
+                colors.append('lightcoral')
+            elif p == 'A2C':
+                colors.append('lightgreen')
+            else:
+                colors.append('lightgray')
         
         # Product 1 service levels
         bars1 = ax1.bar(policies, product1_service, color=colors, alpha=0.7, edgecolor='black')
@@ -443,7 +499,8 @@ class InventoryVisualizer:
         
         from matplotlib.patches import Patch
         legend_elements = [Patch(facecolor='skyblue', alpha=0.7, label='(s, S) Policies'),
-                          Patch(facecolor='lightcoral', alpha=0.7, label='RL Agents')]
+                          Patch(facecolor='lightcoral', alpha=0.7, label='PPO Agent'),
+                          Patch(facecolor='lightgreen', alpha=0.7, label='A2C Agent')]
         ax1.legend(handles=legend_elements, loc='upper right')
         
         plt.tight_layout()
