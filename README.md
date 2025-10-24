@@ -6,7 +6,7 @@ This project implements a complete inventory management simulation using reinfor
 
 - **Gym-compatible inventory environment** with two products
 - **Classical (s, S) policy benchmark** with 5 different parameter sets
-- **Reinforcement learning agents** (PPO and A2C)
+- **Reinforcement learning agents** (PPO)
 - **Flask web interface** with Bootstrap styling
 - **Real-time progress tracking** with loading animations
 - **Interactive visualizations** and comprehensive reports
