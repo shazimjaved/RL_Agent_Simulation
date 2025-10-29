@@ -1,4 +1,4 @@
-# Inventory Management Simulation 
+# Inventory Management
 
 This project implements a complete inventory management simulation using reinforcement learning and classical (s, S) policies, featuring a modern Flask-based web interface for easy interaction and visualization.
 
