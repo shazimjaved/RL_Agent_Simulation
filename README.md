@@ -118,7 +118,7 @@ The simulation typically shows:
 - **Service levels**: 55-95% depending on policy parameters
 - **Training time**: 5-10 minutes for complete evaluation
 
-## 🎓 Educational Value
+## 🎓 Value
 
 This project demonstrates:
 - **Inventory management theory** and classical policies
