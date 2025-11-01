@@ -120,7 +120,6 @@ The simulation typically shows:
 
 ## 🎓 Value
 
-This project demonstrates:
 - **Inventory management theory** and classical policies
 - **Reinforcement learning** in supply chain optimization
 - **Web application development** with Flask
