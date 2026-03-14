@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Results - Inventory Management</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='static/favicon.svg') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='static/css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="modern-header results-header">
+            <div class="container">
+                <div class="header-wrapper">
+                    <div class="header-brand">
+                        <div class="brand-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="brand-text">
+                            <h1>Simulation Results</h1>
+                            <p>Inventory Management Analysis Dashboard</p>
+                        </div>
+                    </div>
+                    <div class="header-meta">
+                        <div class="author-line">
+                            <span class="author">Shafaque Ahmareen</span>
+                            <span class="separator">|</span>
+                            <span class="program">Master's in AI Engineering</span>
+                        </div>
+                        <div class="institution">UNIMORE Italy</div>
+                        <div class="completion-time">
+                            <i class="fas fa-clock"></i>
+                            Completed: {{ results.timestamp }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Winner Section -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8">
+                <div class="card border-success shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-trophy me-2"></i>
+                            Results
+                        </h3>
+                    </div>
+                    <div class="card-body text-center">
+                        {% if results.eval_results.winner %}
+                        <h2 class="text-success mb-3">
+                            <i class="fas fa-crown me-2"></i>
+                            {{ results.eval_results.winner }}
+                        </h2>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="metric-box">
+                                    <h4 class="text-primary">${{ "%.2f"|format(results.eval_results.winner_cost) }}</h4>
+                                    <p class="text-muted">Best Total Cost</p>
+                                </div>
+                            </div>
+                            {% if results.eval_results.improvement > 0 %}
+                            <div class="col-md-3">
+                                <div class="metric-box">
+                                    {% if results.eval_results.winner == '(s, S) Policy' %}
+                                    <h4 class="text-info">Lower Costs</h4>
+                                    <p class="text-muted">vs RL Service Levels</p>
+                                    {% else %}
+                                    <h4 class="text-info">Lower Costs</h4>
+                                    <p class="text-muted">vs Consistent Service</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-3">
+                                <div class="metric-box">
+                                    <h4 class="text-info">{{ "%.1f"|format(results.total_time) }}s</h4>
+                                    <p class="text-muted">Execution Time</p>
+                                </div>
+                            </div>
+                            {% if results.eval_results.per_product_tables is defined %}
+                            <div class="col-md-3">
+                                <div class="metric-box">
+                                    <h4 class="text-warning">2</h4>
+                                    <p class="text-muted">Products Analyzed</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Best Policies Per Product -->
+                        {% if results.eval_results.per_product_tables is defined %}
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-box me-2"></i>Best Product 1 Policy</h6>
+                                    <strong>{{ results.eval_results.per_product_tables.best_product1['Policy'] }}</strong><br>
+                                    <small>Cost: ${{ "%.2f"|format(results.eval_results.per_product_tables.best_product1['Total Cost']) }}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-box me-2"></i>Best Product 2 Policy</h6>
+                                    <strong>{{ results.eval_results.per_product_tables.best_product2['Policy'] }}</strong><br>
+                                    <small>Cost: ${{ "%.2f"|format(results.eval_results.per_product_tables.best_product2['Total Cost']) }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <p class="text-muted">Results processing...</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Results -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-chart-bar me-2"></i>Overall System Performance</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if results.eval_results and results.eval_results.summary_table is defined %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Policy</th>
+                                        <th>Type</th>
+                                        <th>Total Cost</th>
+                                        <th>Avg Daily Cost</th>
+                                        <th>Service Level</th>
+                                        <th>Total Shortages</th>
+                                        <th>Total Orders</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for _, row in results.eval_results.summary_table.iterrows() %}
+                                    <tr class="{% if row['Policy'] == results.eval_results.winner %}table-success{% endif %}">
+                                        <td>{{ row['Policy'] }}</td>
+                                        <td>
+                                            <span class="badge {% if row['Type'] == 'RL' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                                {{ row['Type'] }}
+                                            </span>
+                                        </td>
+                                        <td>${{ "%.2f"|format(row['Total Cost']) }}</td>
+                                        <td>${{ "%.2f"|format(row['Avg Daily Cost']) }}</td>
+                                        <td>{{ "%.1f"|format(row['Service Level %']) }}%</td>
+                                        <td>{{ row['Total Shortages'] }}</td>
+                                        <td>{{ row['Total Orders'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No detailed metrics available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Per-Product Analysis -->
+        {% if results.eval_results and results.eval_results.per_product_tables is defined %}
+        <div class="row mb-4">
+            <!-- Product 1 Performance -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-box me-2"></i>Product 1 Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if results.eval_results.per_product_tables.product1 is defined %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Policy</th>
+                                        <th>Type</th>
+                                        <th>Total Cost</th>
+                                        <th>Service Level</th>
+                                        <th>Shortages</th>
+                                        <th>Orders</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for _, row in results.eval_results.per_product_tables.product1.iterrows() %}
+                                    <tr class="{% if loop.first %}table-success{% endif %}">
+                                        <td>{{ row['Policy'] }}</td>
+                                        <td>
+                                            <span class="badge {% if row['Type'] == 'RL' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                                {{ row['Type'] }}
+                                            </span>
+                                        </td>
+                                        <td>${{ "%.2f"|format(row['Total Cost']) }}</td>
+                                        <td>{{ "%.1f"|format(row['Service Level %']) }}%</td>
+                                        <td>{{ row['Total Shortages'] }}</td>
+                                        <td>{{ row['Total Orders'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 Performance -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-box me-2"></i>Product 2 Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if results.eval_results.per_product_tables.product2 is defined %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Policy</th>
+                                        <th>Type</th>
+                                        <th>Total Cost</th>
+                                        <th>Service Level</th>
+                                        <th>Shortages</th>
+                                        <th>Orders</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for _, row in results.eval_results.per_product_tables.product2.iterrows() %}
+                                    <tr class="{% if loop.first %}table-success{% endif %}">
+                                        <td>{{ row['Policy'] }}</td>
+                                        <td>
+                                            <span class="badge {% if row['Type'] == 'RL' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                                {{ row['Type'] }}
+                                            </span>
+                                        </td>
+                                        <td>${{ "%.2f"|format(row['Total Cost']) }}</td>
+                                        <td>{{ "%.1f"|format(row['Service Level %']) }}%</td>
+                                        <td>{{ row['Total Shortages'] }}</td>
+                                        <td>{{ row['Total Orders'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- System Visualizations -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Overall Cost Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='cost_comparison.png') }}" 
+                             class="img-fluid rounded" alt="Overall Cost Comparison">
+                        <!-- <p class="text-muted small mt-2">Total and Average Daily Cost Comparison</p> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Overall Service Level Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='service_level_comparison.png') }}" 
+                             class="img-fluid rounded" alt="Overall Service Level Comparison">
+                        <!-- <p class="text-muted small mt-2">Service Level Performance Comparison</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Per-Product Visualizations -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Per-Product Cost Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='per_product_comparison.png') }}" 
+                             class="img-fluid rounded" alt="Per-Product Cost Comparison">
+                        <!-- <p class="text-muted small mt-2">Product 1 vs Product 2 Cost Analysis</p> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Per-Product Service Levels</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='per_product_service_levels.png') }}" 
+                             class="img-fluid rounded" alt="Per-Product Service Levels">
+                        <!-- <p class="text-muted small mt-2">Service Level Performance by Product</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Performance Analysis -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-chart-line me-2"></i>Overall Daily Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='daily_performance.png') }}" 
+                             class="img-fluid rounded" alt="Overall Daily Performance">
+                        <!-- <p class="text-muted small mt-2">Combined System Daily Performance</p> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5><i class="fas fa-chart-line me-2"></i>Per-Product Daily Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ url_for('serve_plot', filename='per_product_daily_performance.png') }}" 
+                             class="img-fluid rounded" alt="Per-Product Daily Performance">
+                        <!-- <p class="text-muted small mt-2">Individual Product Daily Performance</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary  -->
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-dashboard me-2"></i>Summary Dashboard</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('serve_plot', filename='summary_dashboard.png') }}" 
+                             class="img-fluid rounded" alt="Summary Dashboard" style="max-width: 100%; height: auto;">
+                        <!-- <p class="text-muted small mt-2">Complete System Overview</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-download me-2"></i>Download Reports</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="{{ url_for('download_file', filename='evaluation_report.txt') }}" 
+                                       class="btn btn-outline-primary">
+                                        <i class="fas fa-file-alt me-2"></i>
+                                        Download Evaluation Report (TXT)
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="{{ url_for('download_file', filename='final_report.md') }}" 
+                                       class="btn btn-outline-success">
+                                        <i class="fas fa-file-code me-2"></i>
+                                        Download Final Report (MD)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <a href="{{ url_for('index') }}" class="btn btn-primary me-3">
+                    <i class="fas fa-home me-2"></i>
+                    Back to Home
+                </a>
+                <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="fas fa-print me-2"></i>
+                    Print Results
+                </button>
+            </div>
+        </div>
+
+        <!-- Report Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-file-alt me-2"></i>Detailed Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto;">{{ results.eval_report }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="modern-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <p class="copyright">© 2025 Shafaque Ahmareen</p>
+                        <p class="project-info">Applications of AI/ML in Operations and Supply Chain Management</p>
+                    </div>
+                    <div class="footer-right">
+                        <div class="footer-links">
+                            <a href="https://github.com/shafaque1910/Inventory_Management" class="footer-link">GitHub</a>
+                        </div>
+                        <p class="supervisor">Supervised by Prof. Davide Mezzogori</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
