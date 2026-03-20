@@ -190,7 +190,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 [Shazim Javed] - [@shazimjaved] - shazimjaved448@gmail.com
 
----
-
-**⭐ Star this repository if it helped you!** 
 
