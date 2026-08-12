@@ -77,10 +77,10 @@ The overall goal is to **minimize total operational inventory cost**:
 
 $$\text{Total Cost} = \text{Holding Cost} + \text{Ordering Cost} + \text{Shortage Penalty Cost}$$
 
-- **Fixed Order Cost ($K$)**: $\$10$ per order batch
-- **Unit Order Cost ($i$)**: $\$3$ per ordered unit
-- **Unit Holding Cost ($h$)**: $\$1$ per unit/day held in inventory
-- **Shortage Penalty Cost ($\pi$)**: $\$7$ per unfulfilled unit (backorder/stockout penalty)
+- **Fixed Order Cost ($K$)**: 10$ per order batch
+- **Unit Order Cost ($i$)**: 3$ per ordered unit
+- **Unit Holding Cost ($h$)**: 1$ per unit/day held in inventory
+- **Shortage Penalty Cost ($\pi$)**: 7$ per unfulfilled unit (backorder/stockout penalty)
 
 ---
 
