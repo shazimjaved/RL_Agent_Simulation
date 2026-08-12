@@ -171,7 +171,6 @@ cython_debug/
 
 # Project specific
 # Model files and training data
-models/
 *.pkl
 *.joblib
 *.h5
@@ -180,12 +179,6 @@ models/
 *.pt
 
 # Generated plots and reports
-plots/
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.pdf
 evaluation_report.txt
 final_report.md
 
@@ -211,9 +204,6 @@ Thumbs.db
 # Flask specific
 flask_session/
 instance/
-
-# Jupyter notebook outputs
-*.ipynb
 
 # Data files (if you have any CSV, Excel files)
 *.csv

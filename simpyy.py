@@ -383,4 +383,3 @@ class InventorySimCore:
             'total_penalty_cost_product1': sum(self.daily_penalty_costs_product1),
             'total_penalty_cost_product2': sum(self.daily_penalty_costs_product2)
         }
-
