@@ -1,51 +1,114 @@
-# 📦 Inventory Management Simulation
+# 📦 Reinforcement Learning & Classical Policy Inventory Management Simulation
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org)
 [![SimPy](https://img.shields.io/badge/SimPy-Discrete%20Event%20Simulation-green.svg)](https://simpy.readthedocs.io/)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-RL%20Environment-orange.svg)](https://gymnasium.farama.org/)
+[![Stable--Baselines3](https://img.shields.io/badge/Stable--Baselines3-PPO-brightgreen.svg)](https://stable-baselines3.readthedocs.io/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20Dashboard-red.svg)](https://flask.palletsprojects.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> Advanced inventory management system for warehouse optimization using reinforcement learning (PPO) and classical (s,S) policies.
+An end-to-end, multi-product warehouse inventory optimization framework using **Reinforcement Learning (Proximal Policy Optimization - PPO)**, **Discrete-Event Simulation (SimPy)**, **Custom Gymnasium Environments**, and **Classical $(s, S)$ Inventory Control Theory**.
 
-## 🎯 Overview
+The system features multi-seed statistical validation (Welch's t-test), rich visualization dashboards, an exploratory Jupyter Notebook, and an interactive Flask Web Dashboard.
 
-This system leverages **SimPy** for discrete-event simulation and **Gymnasium** for reinforcement learning compatibility. It simulates a warehouse managing two products with independent demand processes, comparing the performance of:
+---
 
-- 🤖 **Reinforcement Learning** (PPO - Proximal Policy Optimization)
-- 📊 **Classical Inventory Theory** ((s,S) policy optimization)
+## 🚀 Key Highlights
 
-### Key Features
-- ⚡ Real-time discrete-event simulation
-- 🧠 Deep RL agent with neural network architecture
-- 📈 Comprehensive performance evaluation
-- 🌐 Interactive web interface
-- 📊 Rich visualizations and analytics
+- 🤖 **Deep Reinforcement Learning**: Custom PPO agent trained on Gymnasium environment to dynamic order placement.
+- 📊 **Classical Inventory Control**: Grid-search optimized $(s, S)$ continuous-review inventory policy.
+- ⚡ **Discrete-Event Engine**: Built on `SimPy` for modeling stochastic customer demand arrivals and supplier lead times.
+- 🔬 **Rigorous Statistical Verification**: Evaluates performance across 5 random seeds (123, 234, 345, 456, 567) using **Welch's t-test** for statistical significance.
+- 🌐 **Interactive Web Dashboard**: Flask UI to execute simulations, visualize real-time policy comparisons, and download reports.
+- 📈 **Visualization Suite**: Generates 10+ analytical plots (cost breakdown, service levels, Welch moving averages, per-product dynamics).
+
+---
 
 ## 🏗️ Project Architecture
 
 ```
 Inventory_System/
-├── 📁 Core Simulation
-│   ├── simpyy.py              # SimPy simulation engine
-│   ├── inventory_env.py       # Gymnasium RL environment
-│   └── ss_policy.py           # Classical (s,S) implementation
-├── 🤖 Machine Learning
-│   ├── rl_training.py         # PPO agent training
-│   └── models/                # Trained model weights
-├── 📊 Analysis & Visualization
-│   ├── evaluation.py          # Policy comparison framework
-│   └── visualization.py       # Plotting & analytics
-├── 🌐 Web Interface
-│   └── app.py                 # Flask dashboard
-└── 📁 Output
-    ├── plots/                 # Generated visualizations
-    └── reports/               # Analysis results
+├── 📁 Core Simulation & Environment
+│   ├── simpyy.py              # SimPy discrete-event simulation core engine
+│   ├── inventory_env.py       # Custom Gymnasium environment wrapper
+│   └── ss_policy.py           # Classical (s,S) policy implementation & optimizer
+│
+├── 🤖 Machine Learning & Training
+│   ├── rl_training.py         # PPO agent multi-seed training pipeline
+│   └── models/                # Saved PPO model weights and best checkpoints
+│
+├── 📊 Evaluation & Analytics
+│   ├── evaluation.py          # Multi-seed evaluation framework & Welch t-test
+│   ├── visualization.py       # Matplotlib & Seaborn analytics dashboard generator
+│   └── Analysis .ipynb        # Exploratory analysis notebook
+│
+├── 🌐 Interactive Web Interface
+│   ├── app.py                 # Flask web server & route handlers
+│   ├── templates/             # Jinja2 HTML templates (index.html, results.html)
+│   └── static/                # CSS stylesheet and UI branding assets
+│
+└── 📁 Generated Outputs
+    ├── plots/                 # Saved visualization figures & dashboard images
+    └── requirements.txt       # Project dependency specifications
 ```
 
-## 🚀 Quick Start
+---
+
+## 📋 Mathematical Simulation Model
+
+### 1. Products & Stochastic Demand
+
+The warehouse manages **2 products** sourced from distinct suppliers with stochastic discrete demand distributions and exponential customer inter-arrival times ($\lambda = 0.1$ arrivals/day):
+
+| Product | Demand Values ($D$) | Probability Mass Function $P(D)$ | Inter-Arrival Time |
+| :--- | :--- | :--- | :--- |
+| **Product 1** | $\{1, 2, 3, 4\}$ | $\{1/6, 1/3, 1/3, 1/6\}$ | $\text{Exponential}(\lambda = 0.1)$ |
+| **Product 2** | $\{2, 3, 4, 5\}$ | $\{1/8, 1/4, 1/2, 1/8\}$ | $\text{Exponential}(\lambda = 0.1)$ |
+
+### 2. Stochastic Supplier Lead Times
+
+When an order is placed, delivery to the warehouse is subject to random lead times:
+- **Product 1 Lead Time**: $L_1 \sim \text{Uniform}(0.5, 1.0)$ days
+- **Product 2 Lead Time**: $L_2 \sim \text{Uniform}(0.2, 0.7)$ days
+
+### 3. Inventory Cost Structure
+
+The overall goal is to **minimize total operational inventory cost**:
+
+$$\text{Total Cost} = \text{Holding Cost} + \text{Ordering Cost} + \text{Shortage Penalty Cost}$$
+
+- **Fixed Order Cost ($K$)**: $\$10$ per order batch
+- **Unit Order Cost ($i$)**: $\$3$ per ordered unit
+- **Unit Holding Cost ($h$)**: $\$1$ per unit/day held in inventory
+- **Shortage Penalty Cost ($\pi$)**: $\$7$ per unfulfilled unit (backorder/stockout penalty)
+
+---
+
+## 🧠 Control Policies & Optimization
+
+### 1. Reinforcement Learning Agent (PPO)
+- **Algorithm**: Proximal Policy Optimization (PPO via `Stable-Baselines3`)
+- **State Space**: Current inventory level, inventory position (inventory + on-order), and active pending orders for each product.
+- **Action Space**: Order quantities for Product 1 and Product 2.
+- **Network Architecture**: MLP Policy (Layer sizes: 128 - 128 - 64).
+- **Training Horizon**: 300,000 timesteps per seed.
+
+### 2. Classical $(s, S)$ Inventory Policy
+- **Logic**: Continuous-review inventory policy. Reorder when inventory position drops to or below reorder level $s$, ordering up to target level $S$.
+- **Optimization**: Multi-dimensional grid search evaluating candidate pairs $(s_1, S_1)$ and $(s_2, S_2)$ over:
+  - Reorder point $s \in [0, 10]$
+  - Order-up-to level $S \in [1, 50]$
+
+### 3. Statistical Testing (Welch's t-Test)
+- Evaluates both policies over **1,000 simulation days** across 5 distinct random seeds (`123`, `234`, `345`, `456`, `567`).
+- Performs **Welch's unequal variances t-test** to confirm whether difference in mean daily operational costs is statistically significant ($p < 0.05$).
+
+---
+
+## ⚙️ Quick Start Guide
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.8+
 - Git
 
 ### Installation
@@ -59,135 +122,99 @@ cd Inventory_System
 python -m venv venv
 
 # Activate environment
-# Windows
+# On Windows (PowerShell / CMD):
 venv\Scripts\activate
-# macOS/Linux
+# On macOS / Linux:
 source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### Running the System
+---
 
-#### 🖥️ Command Line Interface
+## 🖥️ Running the System
+
+### Option A: Launch Interactive Web Dashboard 🌐
+Run the Flask server:
 ```bash
-# Run complete evaluation and comparison
+python app.py
+```
+Open your browser and navigate to **`http://localhost:5000`** (or `http://127.0.0.1:5000`).
+From the dashboard, click **Run Simulation** to trigger full RL training, $(s,S)$ optimization, comparative evaluation, and live chart generation.
+
+### Option B: Run Full Evaluation via CLI 📊
+Execute multi-seed evaluation, Welch's t-test, and plot generation:
+```bash
 python evaluation.py
+```
 
-# Train RL agent only
+### Option C: Train RL Agents Only 🤖
+Train PPO models across multiple seeds:
+```bash
 python rl_training.py
+```
 
-# Optimize (s,S) policy only
+### Option D: Optimize Classical Policy Only 📈
+Run grid search for optimal $(s,S)$ parameters:
+```bash
 python ss_policy.py
 ```
 
-#### 🌐 Web Dashboard
+### Option E: Interactive Notebook 📓
+Explore detailed data analysis and policy comparisons in Jupyter:
 ```bash
-# Launch Flask application
-python app.py
-```
-Then navigate to **http://localhost:5000** in your browser.
-
-## 📋 Simulation Model
-
-### Demand Processes
-| Product | Demand Values | Probabilities | Inter-arrival Time |
-|---------|---------------|---------------|-------------------|
-| **Product 1** | {1, 2, 3, 4} | {1/6, 1/3, 1/3, 1/6} | Exponential(λ=0.1) |
-| **Product 2** | {5, 4, 3, 2} | {1/8, 1/2, 1/4, 1/8} | Exponential(λ=0.1) |
-
-### Supply Chain Parameters
-```python
-# Lead Times (in days)
-Product_1: Uniform(0.5, 1.0)
-Product_2: Uniform(0.2, 0.7)
-
-# Cost Structure
-Fixed_Order_Cost (K):     10
-Variable_Cost (i):       3 per unit
-Holding_Cost (h):        1 per unit/day
-Penalty_Cost (π):        7 per unit shortage
+jupyter notebook "Analysis .ipynb"
 ```
 
-## 🧠 Implementation Details
+---
 
-### Reinforcement Learning Agent
-- **Algorithm**: Proximal Policy Optimization (PPO)
-- **Architecture**: Neural Network (128-128-64 layers)
-- **Training**: 300,000 timesteps
-- **Environment**: Custom Gymnasium wrapper
+## 📊 Analytics & Visualizations
 
-### Classical Policy
-- **Method**: (s,S) inventory policy
-- **Optimization**: Grid search
-  - s ∈ [0, 10] (reorder point)
-  - S ∈ [1, 50] (order-up-to level)
-- **Approach**: Independent optimization per product
+Running the evaluation framework automatically generates figures inside the [`plots/`](file:///d:/Projects/Inventory_System/plots) directory:
 
-### Evaluation Framework
-- **Simulation Horizon**: 1,000 days per policy
-- **Metrics**:
-  - 💰 Total cost and average daily cost
-  - 📈 Service level
-  - 📦 Total shortages and orders
-  - 📊 Per-product performance analysis
+- 📊 `summary_dashboard.png`: Unified overview comparing total cost, daily cost, and service levels.
+- 💰 `cost_comparison.png`: Holding vs Ordering vs Shortage cost breakdown.
+- 📈 `daily_performance.png`: Time-series inventory trajectory across 1,000 simulation days.
+- 📉 `rigorous_welch_moving_average.png`: Welch moving average chart showing steady-state convergence.
+- 🎯 `per_product_service_levels.png`: Service level & stockout performance per product.
+- 📦 `per_product_comparison.png` & `per_product_daily_performance.png`: Detailed itemized dynamics.
 
-## 📊 Results & Outputs
-
-The system generates comprehensive analysis including:
-
-- 📈 **Performance comparison plots**
-- 📋 **Detailed evaluation reports** (`evaluation_report.txt`)
-- 📄 **Executive summary** (`final_report.md`)
-- 🎯 **Policy recommendations**
+---
 
 ## 🛠️ Technology Stack
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Simulation** | SimPy | Discrete-event modeling |
-| **RL Framework** | Gymnasium | Environment interface |
-| **ML Library** | Stable-Baselines3 | PPO implementation |
-| **Web Framework** | Flask | Dashboard interface |
-| **Data Science** | NumPy, Pandas | Data processing |
-| **Visualization** | Matplotlib, Seaborn | Plotting & charts |
+| Component | Library / Framework | Description |
+| :--- | :--- | :--- |
+| **Simulation Core** | `SimPy` | Discrete-event simulation of events, queues, and delays |
+| **RL Environment** | `Gymnasium` | Standardized Gym environment API |
+| **RL Algorithm** | `Stable-Baselines3` | PPO implementation |
+| **Web Dashboard** | `Flask`, `HTML5`, `CSS3` | Interactive frontend UI |
+| **Data Processing** | `NumPy`, `Pandas`, `SciPy` | Numerical processing & Welch t-test |
+| **Visualization** | `Matplotlib`, `Seaborn` | Automated chart and plot generation |
 
-## 📈 Performance Metrics
-
-### Key Performance Indicators
-- **Cost Efficiency**: Total inventory cost minimization
-- **Service Level**: Demand fulfillment rate
-- **Inventory Turns**: Stock rotation efficiency
-- **Stockout Rate**: Shortage frequency
-
-### Comparative Analysis
-The system provides detailed comparison between:
-- RL agent adaptability vs. classical policy stability
-- Computational requirements
-- Convergence characteristics
-- Robustness to demand variations
+---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Contributions, issues, and feature requests are welcome!
+1. Fork the project repository.
+2. Create your feature branch (`git checkout -b feature/OptimizationFeature`).
+3. Commit your changes (`git commit -m 'Add OptimizationFeature'`).
+4. Push to the branch (`git push origin feature/OptimizationFeature`).
+5. Open a Pull Request.
+
+---
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the **MIT License**. See `LICENSE` for details.
 
-## 🙏 Acknowledgments
+---
 
-- **SimPy** community for excellent discrete-event simulation framework
-- **Stable-Baselines3** for robust RL implementations
-- **Gymnasium** for standardized RL environments
+## 👤 Author & Contact
 
-## 📞 Contact
-
-[Shazim Javed] - [@shazimjaved] - shazimjaved448@gmail.com
-
-
+**Shazim Javed**
+- 📧 Email: shazimjaved448@gmail.com
+- 💻 GitHub: [@shazimjaved](https://github.com/shazimjaved)
+- 🚀 Repository: [shazimjaved/RL_Agent_Simulation](https://github.com/shazimjaved/RL_Agent_Simulation)
